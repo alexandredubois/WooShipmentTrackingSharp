@@ -17,16 +17,15 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-    - name: Install dependencies
-      run: dotnet add WooShipmentTrackingSharp package Newtonsoft.Json
     - name: Restore dependencies
       run: dotnet restore -v d
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build
     - name: Publish  
       uses: brandedoutcast/publish-nuget@v2.5.2  
       with:   
+        VERSION_REGEX: ^\s*<AssemblyVersion>(.*)<\/AssemblyVersion>\s*$
         PROJECT_FILE_PATH: WooShipmentTrackingSharp/WooShipmentTrackingSharp.csproj  
         NUGET_KEY: ${{secrets.NUGET_API_KEY}} 
