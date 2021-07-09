@@ -21,8 +21,6 @@ jobs:
       run: dotnet add WooShipmentTrackingSharp package Newtonsoft.Json
     - name: Restore dependencies
       run: dotnet restore -v d
-    - name: Clean
-      run: dotnet clean ./WooShipmentTrackingSharp.sln --configuration Release && dotnet nuget locals all --clear
     - name: Build
       run: dotnet build --no-restore
     - name: Test
