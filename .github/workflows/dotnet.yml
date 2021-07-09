@@ -26,6 +26,6 @@ jobs:
     - name: Publish  
       uses: brandedoutcast/publish-nuget@v2.5.2  
       with:   
-        VERSION_REGEX: ^\s*<AssemblyVersion>(.*)<\/AssemblyVersion>\s*$
+        VERSION_STATIC: 0.1.${{github.run_number}}
         PROJECT_FILE_PATH: WooShipmentTrackingSharp/WooShipmentTrackingSharp.csproj  
         NUGET_KEY: ${{secrets.NUGET_API_KEY}} 
