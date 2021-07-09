@@ -19,6 +19,8 @@ jobs:
         dotnet-version: 3.1.x
     - name: Restore dependencies
       run: dotnet restore WooShipmentTrackingSharp.sln
+    - name: Clean
+      run: dotnet clean ./WooShipmentTrackingSharp.sln --configuration Release && dotnet nuget locals all --clear
     - name: Build
       run: dotnet build --no-restore
     - name: Test
