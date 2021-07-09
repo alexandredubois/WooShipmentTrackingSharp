@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Install dependencies
-      run: dotnet add package Newtonsoft.Json
+      run: dotnet add WooShipmentTrackingSharp package Newtonsoft.Json
     - name: Restore dependencies
       run: dotnet restore -v d
     - name: Clean
