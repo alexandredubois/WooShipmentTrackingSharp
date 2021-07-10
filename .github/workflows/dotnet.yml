@@ -5,6 +5,11 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    
+env:
+  PROJECT_PATH: 'WooShipmentTrackingSharp/WooShipmentTrackingSharp.csproj'
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
+  NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
 
 jobs:
   build:
@@ -20,12 +25,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore -v d
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
     - name: Test
       run: dotnet test --no-build
-    - name: Publish  
-      uses: brandedoutcast/publish-nuget@v2.5.2  
-      with:   
-        VERSION_STATIC: 0.1.${{github.run_number}}
-        PROJECT_FILE_PATH: WooShipmentTrackingSharp/WooShipmentTrackingSharp.csproj  
-        NUGET_KEY: ${{secrets.NUGET_API_KEY}} 
+    - name: 'Pack project'
+      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=1.0.${{github.run_number}} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+    - name: 'Push package'
+      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
