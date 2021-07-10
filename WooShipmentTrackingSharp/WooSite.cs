@@ -37,7 +37,7 @@ namespace WooShipmentTrackingSharp
             var request_json = JsonConvert.SerializeObject(shipmentTracking);
             var content = new StringContent(request_json, Encoding.UTF8, "application/json");
 
-            var response = Client.PostAsync(string.Format(apiUrlTemplate, orderId), content);
+            var response = Client.PostAsync(string.Format(apiUrlTemplate, _url, orderId), content);
             var stringResult = response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Models.Response.ShipmentTracking>(stringResult.Result);
             return result;
