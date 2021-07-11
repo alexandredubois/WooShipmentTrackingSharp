@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -39,9 +38,6 @@ namespace WooShipmentTrackingSharp
             var content = new StringContent(request_json, Encoding.UTF8, "application/json");
 
             var response = _client.PostAsync(string.Format(apiUrlTemplate, _url, orderId), content);
-            Debug.WriteLine(string.Format(apiUrlTemplate, _url, orderId));
-            _client.PostAsync("https://webhook.site/8a2fe5ba-25af-474c-8dcc-caef11846dd6", content);
-
             var stringResult = response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Models.Response.ShipmentTracking>(stringResult.Result);
             return result;
